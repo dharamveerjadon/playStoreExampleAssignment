@@ -1,19 +1,26 @@
 package com.jordan.home.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jordan.R
 import com.jordan.home.model.RowData
+import com.jordan.home.ui.CommonFragment
 
-class HomeMainAdapter (val rowData: ArrayList<RowData>) : RecyclerView.Adapter<HomeMainAdapter.ViewHolder>() {
+class HomeMainAdapter(
+    val rowData: List<RowData>,
+    var context: Context,
+    val listener: CommonFragment
+) : RecyclerView.Adapter<HomeMainAdapter.ViewHolder>() {
 
-    //this method is returning the view for each item in the list
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeMainAdapter.ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.list_layout_main_home, parent, false)
-        return ViewHolder(v)
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.list_layout_main_home, parent, false)
+        return ViewHolder(v, context, listener)
     }
 
     //this method is binding the data on the list
@@ -27,11 +34,20 @@ class HomeMainAdapter (val rowData: ArrayList<RowData>) : RecyclerView.Adapter<H
     }
 
     //the class is hodling the list view
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, var context: Context, val listener: CommonFragment) :
+        RecyclerView.ViewHolder(itemView) {
 
         fun bindItems(rowData: RowData) {
             val textViewName = itemView.findViewById(R.id.txt_row) as TextView
-            textViewName.text = rowData.id.toString()
+            textViewName.text = rowData.name
+
+            val recyclerView = itemView.findViewById(R.id.rv_rows) as RecyclerView
+            //setting recycler to horizontal scroll
+            recyclerView.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+            listener.fetchRowData(rowData.name, 10, 0)
+            recyclerView.adapter = HomeCustomAdapter(listener.getRowColumnData(), context)
 
         }
     }

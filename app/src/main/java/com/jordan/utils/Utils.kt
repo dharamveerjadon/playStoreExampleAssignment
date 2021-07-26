@@ -31,7 +31,6 @@ class Utils {
         }
 
 
-
         private fun requestFocus(editText: View, activity: Activity) {
             try {
                 if (editText.requestFocus()) {

@@ -1,18 +1,17 @@
 package com.carry.mobile.retrofit
 
-import com.jordan.home.model.ImageDataResponse
-import com.jordan.home.model.RowDataResponse
+import com.jordan.home.model.RowData
+import com.jordan.home.model.RowInnerData
 import io.reactivex.Observable
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.Url
 
 interface ApiService {
 
-    @GET("images")
-    fun fetchImages(): Observable<ImageDataResponse>
-
     @GET("rows")
-    fun fetchRows(): Observable<RowDataResponse>
+    fun fetchRows(): Observable<List<RowData>>
+
+    @GET
+    fun fetchRowsColumnData(@Url url: String): Observable<List<RowInnerData>>
 
 }

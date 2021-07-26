@@ -2,7 +2,6 @@ package com.jordan
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
@@ -11,7 +10,7 @@ import com.jordan.home.ui.HomeFragment
 import com.jordan.utils.ManageFragment
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private var bottomNavigationView : BottomNavigationView ?= null
+    private var bottomNavigationView: BottomNavigationView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -20,7 +19,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         ManageFragment.replaceFrag(this, HomeFragment(), "")
 
 
-        bottomNavigationView?.setOnNavigationItemSelectedListener { onNavigationItemSelected(it)  }
+        bottomNavigationView?.setOnNavigationItemSelectedListener { onNavigationItemSelected(it) }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -37,6 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.settings -> {
                 ManageFragment.replaceFrag(this, OtherFragment(), "")
             }
+
         }
         return true
     }

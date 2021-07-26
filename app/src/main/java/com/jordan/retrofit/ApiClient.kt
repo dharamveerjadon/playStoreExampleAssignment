@@ -11,11 +11,9 @@ import java.util.concurrent.TimeUnit
 
 class ApiClient {
 
-    companion object
-    {
-        fun create(): ApiService
-        {
-           val interceptor = HttpLoggingInterceptor()
+    companion object {
+        fun create(): ApiService {
+            val interceptor = HttpLoggingInterceptor()
             interceptor.level = HttpLoggingInterceptor.Level.BODY
             val client: OkHttpClient = OkHttpClient.Builder()
                 .callTimeout(60, TimeUnit.SECONDS)
@@ -25,19 +23,20 @@ class ApiClient {
                 .addInterceptor(interceptor) // remove in production
                 .build()
 
-            val retrofit = Retrofit.Builder().addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(Utils.BASE_URL)
-                .client(client)
-                .build()
+            val retrofit =
+                Retrofit.Builder().addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl(Utils.BASE_URL)
+                    .client(client)
+                    .build()
 
             return retrofit.create(ApiService::class.java)
         }
 
         private fun getInterceptor(token: String): Interceptor {
 
-            return  Interceptor {
-              val headers = it.request().newBuilder().addHeader("Authorization",token).build()
+            return Interceptor {
+                val headers = it.request().newBuilder().addHeader("Authorization", token).build()
                 it.proceed(headers)
             }
         }

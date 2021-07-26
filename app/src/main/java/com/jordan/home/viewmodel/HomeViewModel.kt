@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 
 class HomeViewModel : ViewModel() {
 
-    public fun onSmileClick(context: Context) {
+    fun onSmileClick(context: Context) {
         Toast.makeText(context, "Hey your profile icon", Toast.LENGTH_SHORT).show()
     }
 }

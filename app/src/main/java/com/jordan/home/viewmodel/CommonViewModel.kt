@@ -6,7 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.carry.mobile.retrofit.ApiClient
 import com.carry.mobile.retrofit.ApiService
-import com.jordan.home.model.RowDataResponse
+import com.jordan.home.model.RowData
+import com.jordan.home.model.RowInnerData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
@@ -14,7 +15,8 @@ import retrofit2.HttpException
 
 class CommonViewModel : ViewModel() {
 
-    val rowResponse: MutableLiveData<RowDataResponse> = MutableLiveData()
+    val rowResponse: MutableLiveData<List<RowData>> = MutableLiveData()
+    val rowColumnResponse: MutableLiveData<List<RowInnerData>> = MutableLiveData()
     private val apiService: ApiService by lazy { ApiClient.create() }
 
     fun getRows(context: FragmentActivity) {
@@ -38,4 +40,28 @@ class CommonViewModel : ViewModel() {
             )
 
     }
+
+    fun getRowsColumnData(context: FragmentActivity, url: String) {
+        val observable = apiService.fetchRowsColumnData(url)
+
+
+        observable.observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe(
+                {
+                    rowColumnResponse.value = it
+
+                },
+                {
+                    if (it is HttpException) {
+                        val errorBody = it.response()?.errorBody()?.string()
+                        val jsonObject = JSONObject(errorBody)
+                        Toast.makeText(context, jsonObject.getString("message"), Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            )
+
+    }
+
 }
