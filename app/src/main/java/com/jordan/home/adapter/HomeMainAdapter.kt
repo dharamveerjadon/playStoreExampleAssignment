@@ -9,10 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jordan.R
 import com.jordan.home.model.RowData
+import com.jordan.home.model.RowDataAdapterModel
 import com.jordan.home.ui.CommonFragment
 
 class HomeMainAdapter(
-    val rowData: List<RowData>,
+    val rowData: List<RowDataAdapterModel>,
     var context: Context,
     val listener: CommonFragment
 ) : RecyclerView.Adapter<HomeMainAdapter.ViewHolder>() {
@@ -37,7 +38,7 @@ class HomeMainAdapter(
     class ViewHolder(itemView: View, var context: Context, val listener: CommonFragment) :
         RecyclerView.ViewHolder(itemView) {
 
-        fun bindItems(rowData: RowData) {
+        fun bindItems(rowData: RowDataAdapterModel) {
             val textViewName = itemView.findViewById(R.id.txt_row) as TextView
             textViewName.text = rowData.name
 
@@ -46,8 +47,8 @@ class HomeMainAdapter(
             recyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-            listener.fetchRowData(rowData.name, 10, 0)
-            recyclerView.adapter = HomeCustomAdapter(listener.getRowColumnData(), context)
+           // listener.fetchRowData(rowData.name, 10, 0)
+            recyclerView.adapter = HomeCustomAdapter(rowData.list, context)
 
         }
     }

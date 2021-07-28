@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.carry.mobile.retrofit.ApiClient
 import com.carry.mobile.retrofit.ApiService
 import com.jordan.home.model.RowData
+import com.jordan.home.model.RowDataAdapterModel
 import com.jordan.home.model.RowInnerData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -16,7 +17,7 @@ import retrofit2.HttpException
 class CommonViewModel : ViewModel() {
 
     val rowResponse: MutableLiveData<List<RowData>> = MutableLiveData()
-    val rowColumnResponse: MutableLiveData<List<RowInnerData>> = MutableLiveData()
+    val rowColumnResponse: MutableLiveData<RowDataAdapterModel> = MutableLiveData()
     private val apiService: ApiService by lazy { ApiClient.create() }
 
     fun getRows(context: FragmentActivity) {
@@ -41,7 +42,7 @@ class CommonViewModel : ViewModel() {
 
     }
 
-    fun getRowsColumnData(context: FragmentActivity, url: String) {
+    fun getRowsColumnData(context: FragmentActivity, url: String, columnName : String) {
         val observable = apiService.fetchRowsColumnData(url)
 
 
@@ -49,7 +50,7 @@ class CommonViewModel : ViewModel() {
             .subscribeOn(Schedulers.io())
             .subscribe(
                 {
-                    rowColumnResponse.value = it
+                    rowColumnResponse.value = RowDataAdapterModel(columnName, it)
 
                 },
                 {

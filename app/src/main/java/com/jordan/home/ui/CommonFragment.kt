@@ -12,15 +12,17 @@ import com.jordan.R
 import com.jordan.common.ui.SpinnerView
 import com.jordan.home.adapter.HomeMainAdapter
 import com.jordan.home.model.RowData
-import com.jordan.home.model.RowInnerData
+import com.jordan.home.model.RowDataAdapterModel
 import com.jordan.home.viewmodel.CommonViewModel
+import java.util.*
+import java.util.Collections.sort
 
 class CommonFragment : Fragment() {
 
     private var recyclerView: RecyclerView? = null
-    private var list: List<RowInnerData> = listOf()
-    private var rowDataList: List<RowData> = listOf()
-    var rowlist: MutableList<List<RowInnerData>> = mutableListOf()
+    private var list: List<RowData> = listOf()
+    private var rowDataList: List<RowDataAdapterModel> = listOf()
+    var rowlist: MutableList<RowDataAdapterModel> = mutableListOf()
     private lateinit var spinnerView: SpinnerView
 
     companion object {
@@ -39,11 +41,9 @@ class CommonFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initFindId(view)
-        observeResponse()
         observeResponseforHorizontalRowData()
+        observeResponse()
 
-        viewModel.getRows(requireActivity())
-        recyclerView?.adapter = HomeMainAdapter(rowDataList, requireContext(), this)
     }
 
     override fun onResume() {
@@ -58,10 +58,11 @@ class CommonFragment : Fragment() {
 
     private fun observeResponse() {
         viewModel.rowResponse.observe(viewLifecycleOwner, {
-            // Access the RecyclerView Adapter and load the data into it
-            rowDataList = it
-            spinnerView.visibility = View.GONE
-            bindRecyclerView()
+            rowlist.clear()
+            list = it
+            for (item in it) {
+                fetchRowData(item.name, 10, 0)
+            }
         })
 
         viewModel.rowResponse.removeObservers(this)
@@ -70,8 +71,12 @@ class CommonFragment : Fragment() {
     private fun observeResponseforHorizontalRowData() {
 
         viewModel.rowColumnResponse.observe(viewLifecycleOwner, {
-            list = it
+
             rowlist.add(it)
+
+            if (rowlist.size == list.size) {
+                bindRecyclerView()
+            }
 
         })
         viewModel.rowColumnResponse.removeObservers(this)
@@ -79,17 +84,15 @@ class CommonFragment : Fragment() {
 
     private fun bindRecyclerView() {
         recyclerView?.layoutManager = LinearLayoutManager(activity)
-        recyclerView?.adapter = HomeMainAdapter(rowDataList, requireContext(), this)
-
+        recyclerView?.adapter = HomeMainAdapter(rowlist, requireContext(), this)
+        spinnerView.visibility = View.GONE
     }
 
     fun fetchRowData(row_id: String, limit: Int, skip: Int) {
 
         val url =
             "http://206.189.139.221:5252/api/$row_id/items?limit=$limit&skip=$skip"
-        viewModel.getRowsColumnData(requireActivity(), url)
+        viewModel.getRowsColumnData(requireActivity(), url, row_id)
 
     }
-
-    fun getRowColumnData() = list
 }
